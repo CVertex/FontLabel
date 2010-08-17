@@ -31,6 +31,8 @@
 @implementation FontLabel
 @synthesize zFont;
 @synthesize zAttributedText;
+@synthesize glow = _glow;
+@synthesize glowColor = _glowColor;
 
 - (id)initWithFrame:(CGRect)frame fontName:(NSString *)fontName pointSize:(CGFloat)pointSize {
 	return [self initWithFrame:frame zFont:[[FontManager sharedManager] zFontWithName:fontName pointSize:pointSize]];
@@ -39,6 +41,7 @@
 - (id)initWithFrame:(CGRect)frame zFont:(ZFont *)font {
 	if ((self = [super initWithFrame:frame])) {
 		zFont = [font retain];
+		self.glow = NO;
 	}
 	return self;
 }
@@ -128,13 +131,13 @@
 					point.x += origSize.width - size.width;
 					break;
 			}
-			[self.text drawAtPoint:point forWidth:size.width withZFont:actualFont lineBreakMode:self.lineBreakMode];
+			[self.text drawAtPoint:point forWidth:size.width withZFont:actualFont lineBreakMode:self.lineBreakMode hasGlow:self.glow withGlowColor:self.glowColor];
 		} else {
 			CGSize size = [self.text sizeWithZFont:actualFont constrainedToSize:origSize lineBreakMode:self.lineBreakMode numberOfLines:self.numberOfLines];
 			CGPoint point = rect.origin;
 			point.y += roundf((rect.size.height - size.height) / 2.0f);
 			rect = (CGRect){point, CGSizeMake(rect.size.width, size.height)};
-			[self.text drawInRect:rect withZFont:actualFont lineBreakMode:self.lineBreakMode alignment:self.textAlignment numberOfLines:self.numberOfLines];
+			[self.text drawInRect:rect withZFont:actualFont lineBreakMode:self.lineBreakMode alignment:self.textAlignment numberOfLines:self.numberOfLines hasGlow:self.glow withGlowColor:self.glowColor];
 		}
 	} else {
 		ZAttributedString *attStr = self.zAttributedText;
@@ -157,7 +160,7 @@
 		CGPoint point = rect.origin;
 		point.y += roundf((rect.size.height - size.height) / 2.0f);
 		rect = (CGRect){point, CGSizeMake(rect.size.width, size.height)};
-		[attStr drawInRect:rect withLineBreakMode:self.lineBreakMode alignment:self.textAlignment numberOfLines:self.numberOfLines];
+		[attStr drawInRect:rect withLineBreakMode:self.lineBreakMode alignment:self.textAlignment numberOfLines:self.numberOfLines hasGlow:self.glow withGlowColor:self.glowColor];
 	}
 }
 
@@ -179,6 +182,7 @@
 }
 
 - (void)dealloc {
+	[self.glowColor release];
 	[zFont release];
 	[zAttributedText release];
 	[super dealloc];

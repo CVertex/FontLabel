@@ -45,12 +45,16 @@
 		  numberOfLines:(NSUInteger)numberOfLines;
 - (CGSize)drawAtPoint:(CGPoint)point withZFont:(ZFont *)font;
 - (CGSize)drawAtPoint:(CGPoint)point forWidth:(CGFloat)width withZFont:(ZFont *)font lineBreakMode:(UILineBreakMode)lineBreakMode;
+- (CGSize)drawAtPoint:(CGPoint)point forWidth:(CGFloat)width withZFont:(ZFont *)font lineBreakMode:(UILineBreakMode)lineBreakMode hasGlow:(BOOL)hasGlow withGlowColor:(UIColor *)glowColor;
 - (CGSize)drawInRect:(CGRect)rect withZFont:(ZFont *)font;
 - (CGSize)drawInRect:(CGRect)rect withZFont:(ZFont *)font lineBreakMode:(UILineBreakMode)lineBreakMode;
 - (CGSize)drawInRect:(CGRect)rect withZFont:(ZFont *)font lineBreakMode:(UILineBreakMode)lineBreakMode
 		   alignment:(UITextAlignment)alignment;
 - (CGSize)drawInRect:(CGRect)rect withZFont:(ZFont *)font lineBreakMode:(UILineBreakMode)lineBreakMode
 		   alignment:(UITextAlignment)alignment numberOfLines:(NSUInteger)numberOfLines;
+- (CGSize)drawInRect:(CGRect)rect withZFont:(ZFont *)font lineBreakMode:(UILineBreakMode)lineBreakMode
+					 alignment:(UITextAlignment)alignment numberOfLines:(NSUInteger)numberOfLines hasGlow:(BOOL)hasGlow 
+			 withGlowColor:(UIColor *)glowColor;
 @end
 
 @interface ZAttributedString (ZAttributedStringDrawing)
@@ -61,9 +65,14 @@
 				  numberOfLines:(NSUInteger)numberOfLines;
 - (CGSize)drawAtPoint:(CGPoint)point;
 - (CGSize)drawAtPoint:(CGPoint)point forWidth:(CGFloat)width lineBreakMode:(UILineBreakMode)lineBreakMode;
+- (CGSize)drawAtPoint:(CGPoint)point forWidth:(CGFloat)width lineBreakMode:(UILineBreakMode)lineBreakMode 
+							hasGlow:(BOOL)hasGlow withGlowColor:(UIColor *)glowColor;
 - (CGSize)drawInRect:(CGRect)rect;
 - (CGSize)drawInRect:(CGRect)rect withLineBreakMode:(UILineBreakMode)lineBreakMode;
 - (CGSize)drawInRect:(CGRect)rect withLineBreakMode:(UILineBreakMode)lineBreakMode alignment:(UITextAlignment)alignment;
 - (CGSize)drawInRect:(CGRect)rect withLineBreakMode:(UILineBreakMode)lineBreakMode alignment:(UITextAlignment)alignment
 	   numberOfLines:(NSUInteger)numberOfLines;
+- (CGSize)drawInRect:(CGRect)rect withLineBreakMode:(UILineBreakMode)lineBreakMode alignment:(UITextAlignment)alignment
+			 numberOfLines:(NSUInteger)numberOfLines hasGlow:(BOOL)hasGlow withGlowColor:(UIColor *)glowColor;
+
 @end

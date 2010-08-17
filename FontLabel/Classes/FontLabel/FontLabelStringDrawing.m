@@ -363,8 +363,9 @@ static void readRunInformation(NSArray *attributes, NSUInteger len, CFMutableDic
 	}
 }
 
-static CGSize drawOrSizeTextConstrainedToSize(BOOL performDraw, NSString *string, NSArray *attributes, CGSize constrainedSize, NSUInteger maxLines,
-											  UILineBreakMode lineBreakMode, UITextAlignment alignment, BOOL ignoreColor) {
+static CGSize drawOrSizeTextConstrainedToSizeWithGlow(BOOL performDraw, NSString *string, NSArray *attributes, CGSize constrainedSize, NSUInteger maxLines,
+																							UILineBreakMode lineBreakMode, UITextAlignment alignment, BOOL ignoreColor, BOOL hasGlow, 
+																							UIColor *glowColor) {
 	NSUInteger len = [string length];
 	NSUInteger idx = 0;
 	CGPoint drawPoint = CGPointZero;
@@ -667,6 +668,10 @@ static CGSize drawOrSizeTextConstrainedToSize(BOOL performDraw, NSString *string
 							[foregroundColor setFill];
 						}
 						
+						if (hasGlow) {
+							CGContextSetShadowWithColor(ctx, CGSizeMake(0,0), 6, glowColor.CGColor);							
+						}
+						
 						CGContextShowGlyphsAtPoint(ctx, drawPoint.x, drawPoint.y + lineAscender, &glyphs[glyphIdx], numGlyphs);
 						NSNumber *underlineStyle = getValueOrDefaultForRun(currentRun, ZUnderlineStyleAttributeName);
 						if ([underlineStyle	integerValue] & ZUnderlineStyleMask) {
@@ -723,14 +728,19 @@ static CGSize drawOrSizeTextConstrainedToSize(BOOL performDraw, NSString *string
 	return retValue;
 }
 
+static CGSize drawOrSizeTextConstrainedToSize(BOOL performDraw, NSString *string, NSArray *attributes, CGSize constrainedSize, NSUInteger maxLines,
+																							UILineBreakMode lineBreakMode, UITextAlignment alignment, BOOL ignoreColor) {
+	return drawOrSizeTextConstrainedToSizeWithGlow(performDraw, string, attributes, constrainedSize, maxLines, lineBreakMode, alignment, ignoreColor, NO, nil);
+}
+
 static NSArray *attributeRunForFont(ZFont *font) {
 	return [NSArray arrayWithObject:[ZAttributeRun attributeRunWithIndex:0
 															  attributes:[NSDictionary dictionaryWithObject:font
 																									 forKey:ZFontAttributeName]]];
 }
 
-static CGSize drawTextInRect(CGRect rect, NSString *text, NSArray *attributes, UILineBreakMode lineBreakMode,
-							 UITextAlignment alignment, NSUInteger numberOfLines, BOOL ignoreColor) {
+static CGSize drawTextInRectWithGlow(CGRect rect, NSString *text, NSArray *attributes, UILineBreakMode lineBreakMode,
+							 UITextAlignment alignment, NSUInteger numberOfLines, BOOL ignoreColor, BOOL hasGlow, UIColor *glowColor) {
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	
 	CGContextSaveGState(ctx);
@@ -742,11 +752,16 @@ static CGSize drawTextInRect(CGRect rect, NSString *text, NSArray *attributes, U
 	CGContextTranslateCTM(ctx, rect.origin.x, rect.origin.y);
 	
 	CGContextSetTextDrawingMode(ctx, kCGTextFill);
-	CGSize size = drawOrSizeTextConstrainedToSize(YES, text, attributes, rect.size, numberOfLines, lineBreakMode, alignment, ignoreColor);
+	CGSize size = drawOrSizeTextConstrainedToSizeWithGlow(YES, text, attributes, rect.size, numberOfLines, lineBreakMode, alignment, ignoreColor, hasGlow, glowColor);
 	
 	CGContextRestoreGState(ctx);
 	
 	return size;
+}
+
+static CGSize drawTextInRect(CGRect rect, NSString *text, NSArray *attributes, UILineBreakMode lineBreakMode,
+														 UITextAlignment alignment, NSUInteger numberOfLines, BOOL ignoreColor) {
+	return drawTextInRectWithGlow(rect, text, attributes, lineBreakMode, alignment, numberOfLines, ignoreColor, NO, nil);
 }
 
 @implementation NSString (FontLabelStringDrawing)
@@ -819,7 +834,11 @@ static CGSize drawTextInRect(CGRect rect, NSString *text, NSArray *attributes, U
 }
 
 - (CGSize)drawAtPoint:(CGPoint)point forWidth:(CGFloat)width withZFont:(ZFont *)font lineBreakMode:(UILineBreakMode)lineBreakMode {
-	return drawTextInRect((CGRect){ point, { width, CGFLOAT_MAX } }, self, attributeRunForFont(font), lineBreakMode, UITextAlignmentLeft, 1, YES);
+	return [self drawAtPoint:point forWidth:width withZFont:font lineBreakMode:lineBreakMode hasGlow:NO withGlowColor:nil];
+}
+
+- (CGSize)drawAtPoint:(CGPoint)point forWidth:(CGFloat)width withZFont:(ZFont *)font lineBreakMode:(UILineBreakMode)lineBreakMode hasGlow:(BOOL)hasGlow withGlowColor:(UIColor *)glowColor {
+	return drawTextInRectWithGlow((CGRect){ point, { width, CGFLOAT_MAX } }, self, attributeRunForFont(font), lineBreakMode, UITextAlignmentLeft, 1, YES, hasGlow, glowColor);
 }
 
 - (CGSize)drawInRect:(CGRect)rect withZFont:(ZFont *)font {
@@ -832,13 +851,20 @@ static CGSize drawTextInRect(CGRect rect, NSString *text, NSArray *attributes, U
 
 - (CGSize)drawInRect:(CGRect)rect withZFont:(ZFont *)font lineBreakMode:(UILineBreakMode)lineBreakMode
 		   alignment:(UITextAlignment)alignment {
-	return drawTextInRect(rect, self, attributeRunForFont(font), lineBreakMode, alignment, 0, YES);
+	return [self drawInRect:rect withZFont:font lineBreakMode:lineBreakMode alignment:alignment numberOfLines:0];
 }
 
 - (CGSize)drawInRect:(CGRect)rect withZFont:(ZFont *)font lineBreakMode:(UILineBreakMode)lineBreakMode
 		   alignment:(UITextAlignment)alignment numberOfLines:(NSUInteger)numberOfLines {
-	return drawTextInRect(rect, self, attributeRunForFont(font), lineBreakMode, alignment, numberOfLines, YES);
+		return [self drawInRect:rect withZFont:font lineBreakMode:lineBreakMode alignment:alignment numberOfLines:numberOfLines hasGlow:NO withGlowColor:nil];
 }
+
+- (CGSize)drawInRect:(CGRect)rect withZFont:(ZFont *)font lineBreakMode:(UILineBreakMode)lineBreakMode
+					 alignment:(UITextAlignment)alignment numberOfLines:(NSUInteger)numberOfLines hasGlow:(BOOL)hasGlow 
+			 withGlowColor:(UIColor *)glowColor {
+	return drawTextInRectWithGlow(rect, self, attributeRunForFont(font), lineBreakMode, alignment, numberOfLines, YES, hasGlow, glowColor);
+}
+
 @end
 
 @implementation ZAttributedString (ZAttributedStringDrawing)
@@ -868,7 +894,11 @@ static CGSize drawTextInRect(CGRect rect, NSString *text, NSArray *attributes, U
 }
 
 - (CGSize)drawAtPoint:(CGPoint)point forWidth:(CGFloat)width lineBreakMode:(UILineBreakMode)lineBreakMode {
-	return drawTextInRect((CGRect){ point, { width, CGFLOAT_MAX } }, self.string, self.attributes, lineBreakMode, UITextAlignmentLeft, 1, NO);
+	return [self drawAtPoint:point forWidth:width lineBreakMode:lineBreakMode hasGlow:NO withGlowColor:nil];
+}
+
+- (CGSize)drawAtPoint:(CGPoint)point forWidth:(CGFloat)width lineBreakMode:(UILineBreakMode)lineBreakMode hasGlow:(BOOL)hasGlow withGlowColor:(UIColor *)glowColor {
+	return drawTextInRectWithGlow((CGRect){ point, { width, CGFLOAT_MAX } }, self.string, self.attributes, lineBreakMode, UITextAlignmentLeft, 1, NO, hasGlow, glowColor);
 }
 
 - (CGSize)drawInRect:(CGRect)rect {
@@ -880,11 +910,16 @@ static CGSize drawTextInRect(CGRect rect, NSString *text, NSArray *attributes, U
 }
 
 - (CGSize)drawInRect:(CGRect)rect withLineBreakMode:(UILineBreakMode)lineBreakMode alignment:(UITextAlignment)alignment {
-	return drawTextInRect(rect, self.string, self.attributes, lineBreakMode, alignment, 0, NO);
+	return [self drawInRect:rect withLineBreakMode:lineBreakMode alignment:alignment numberOfLines:0 hasGlow:NO withGlowColor:nil];
 }
 
 - (CGSize)drawInRect:(CGRect)rect withLineBreakMode:(UILineBreakMode)lineBreakMode alignment:(UITextAlignment)alignment
 	   numberOfLines:(NSUInteger)numberOfLines {
-	return drawTextInRect(rect, self.string, self.attributes, lineBreakMode, alignment, numberOfLines, NO);
+	return [self drawInRect:rect withLineBreakMode:lineBreakMode alignment:alignment numberOfLines:numberOfLines hasGlow:NO withGlowColor:nil];
+}
+
+- (CGSize)drawInRect:(CGRect)rect withLineBreakMode:(UILineBreakMode)lineBreakMode alignment:(UITextAlignment)alignment
+			 numberOfLines:(NSUInteger)numberOfLines hasGlow:(BOOL)hasGlow withGlowColor:(UIColor *)glowColor {
+	return drawTextInRectWithGlow(rect, self.string, self.attributes, lineBreakMode, alignment, numberOfLines, NO, hasGlow, glowColor);
 }
 @end

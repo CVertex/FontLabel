@@ -29,6 +29,8 @@
 	void *reserved; // works around a bug in UILabel
 	ZFont *zFont;
 	ZAttributedString *zAttributedText;
+	BOOL _glow;
+	UIColor *_glowColor;
 }
 @property (nonatomic, setter=setCGFont:) CGFontRef cgFont __AVAILABILITY_INTERNAL_DEPRECATED;
 @property (nonatomic, assign) CGFloat pointSize __AVAILABILITY_INTERNAL_DEPRECATED;
@@ -37,6 +39,8 @@
 // if attributedText is non-nil, the font/text/textColor
 // in addition, adjustsFontSizeToFitWidth does not work with attributed text
 @property (nonatomic, copy) ZAttributedString *zAttributedText;
+@property (getter=hasGlow) BOOL glow;
+@property (retain) UIColor *glowColor;
 // -initWithFrame:fontName:pointSize: uses FontManager to look up the font name
 - (id)initWithFrame:(CGRect)frame fontName:(NSString *)fontName pointSize:(CGFloat)pointSize;
 - (id)initWithFrame:(CGRect)frame zFont:(ZFont *)font;
