@@ -23,6 +23,7 @@
 #import "FontManager.h"
 #import "FontLabelStringDrawing.h"
 #import "ZFont.h"
+#import "ZAttributedStringPrivate.h"
 
 @interface ZFont (ZFontPrivate)
 @property (nonatomic, readonly) CGFloat ratio;
@@ -42,12 +43,37 @@
 	if ((self = [super initWithFrame:frame])) {
 		zFont = [font retain];
 		self.glow = NO;
+		self.userInteractionEnabled = YES;
 	}
 	return self;
 }
 
 - (id)initWithFrame:(CGRect)frame font:(CGFontRef)font pointSize:(CGFloat)pointSize {
 	return [self initWithFrame:frame zFont:[ZFont fontWithCGFont:font size:pointSize]];
+}
+
+- (id)initWithFrame:(CGRect)frame {
+	if ((self = [super initWithFrame:frame])) {
+		self.userInteractionEnabled = YES;
+	}  
+	return self;
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+	//We only track a single touch
+	UITouch * touch = [touches anyObject];
+	if (touch == nil) {
+		return;
+	}
+	CGPoint point = [touch locationInView:self];
+	NSArray * attributes = [zAttributedText attributes];
+	for (ZAttributeRun * attributeRun in attributes) {
+		NSDictionary * dict = [attributeRun attributes];
+		Clickable * clickable = [dict valueForKey:ZClickableStyleAttributeName];
+		if (CGRectContainsPoint(clickable.rect, point)) {
+			[clickable.delegate performSelector:clickable.selector withObject:clickable.object];
+		}
+	}
 }
 
 - (CGFontRef)cgFont {

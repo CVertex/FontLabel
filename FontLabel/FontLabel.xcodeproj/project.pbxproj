@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		07245AFB12213E6700F04027 /* Clickable.m in Sources */ = {isa = PBXBuildFile; fileRef = 07245AFA12213E6700F04027 /* Clickable.m */; };
 		1D3623260D0F684500981E51 /* FontLabelAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* FontLabelAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -31,6 +32,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		07245AF912213E6700F04027 /* Clickable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clickable.h; sourceTree = "<group>"; };
+		07245AFA12213E6700F04027 /* Clickable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Clickable.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* FontLabelAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontLabelAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* FontLabelAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FontLabelAppDelegate.m; sourceTree = "<group>"; };
@@ -171,6 +174,8 @@
 				435E454D106981FA00F86F0E /* ZAttributedString.h */,
 				435E46BB106AD90600F86F0E /* ZAttributedStringPrivate.h */,
 				435E454E106981FA00F86F0E /* ZAttributedString.m */,
+				07245AF912213E6700F04027 /* Clickable.h */,
+				07245AFA12213E6700F04027 /* Clickable.m */,
 			);
 			path = FontLabel;
 			sourceTree = "<group>";
@@ -293,6 +298,7 @@
 				433B50660FB50375000B10FB /* FontManager.m in Sources */,
 				437BC2950FFD2E21001C57E9 /* ZFont.m in Sources */,
 				435E454F106981FA00F86F0E /* ZAttributedString.m in Sources */,
+				07245AFB12213E6700F04027 /* Clickable.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

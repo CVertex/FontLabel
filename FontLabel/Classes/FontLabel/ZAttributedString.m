@@ -17,7 +17,6 @@
 @end
 
 @interface ZAttributedString ()
-@property (nonatomic, readonly) NSArray *attributes;
 @end
 
 @implementation ZAttributedString
@@ -590,6 +589,7 @@
 }
 @end
 
+NSString * const ZClickableStyleAttributeName = @"ZClickableStyleAttributeName";
 NSString * const ZFontAttributeName = @"ZFontAttributeName";
 NSString * const ZForegroundColorAttributeName = @"ZForegroundColorAttributeName";
 NSString * const ZBackgroundColorAttributeName = @"ZBackgroundColorAttributeName";

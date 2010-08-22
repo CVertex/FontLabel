@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Clickable.h"
 
 #if NS_BLOCKS_AVAILABLE
 #define Z_BLOCKS 1
@@ -29,6 +30,7 @@ typedef NSUInteger ZAttributedStringEnumerationOptions;
 }
 @property (nonatomic, readonly) NSUInteger length;
 @property (nonatomic, readonly) NSString *string;
+@property (nonatomic, readonly) NSArray *attributes;
 - (id)initWithAttributedString:(ZAttributedString *)attr;
 - (id)initWithString:(NSString *)str;
 - (id)initWithString:(NSString *)str attributes:(NSDictionary *)attributes;
@@ -64,6 +66,7 @@ extern NSString * const ZFontAttributeName;
 extern NSString * const ZForegroundColorAttributeName;
 extern NSString * const ZBackgroundColorAttributeName;
 extern NSString * const ZUnderlineStyleAttributeName;
+extern NSString * const ZClickableStyleAttributeName;
 
 enum {
 	ZUnderlineStyleNone = 0x00,

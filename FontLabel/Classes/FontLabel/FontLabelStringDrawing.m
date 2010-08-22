@@ -668,6 +668,10 @@ static CGSize drawOrSizeTextConstrainedToSizeWithGlow(BOOL performDraw, NSString
 							[foregroundColor setFill];
 						}
 						
+						// Add an action area
+						Clickable * clickable = getValueOrDefaultForRun(currentRun, ZClickableStyleAttributeName);
+						clickable.rect = CGRectMake(drawPoint.x, drawPoint.y + lineAscender, lineSize.width, lineSize.height);
+						
 						if (hasGlow) {
 							CGContextSetShadowWithColor(ctx, CGSizeMake(0,0), 6, glowColor.CGColor);							
 						}
