@@ -26,6 +26,10 @@
 #import "FontLabelStringDrawing.h"
 #import "FontManager.h"
 
+@interface FontLabelViewController ()
+-(void)yellowColorClicked:(id)object;
+@end
+
 @implementation FontLabelViewController
 
 - (void)loadView {
@@ -39,6 +43,10 @@
 	[label sizeToFit];
 	label.backgroundColor = nil;
 	label.opaque = NO;
+
+	[label setGlow:YES];
+	[label setGlowColor:[UIColor yellowColor]];
+	
 	[self.view addSubview:label];
 	[label release];
 	
@@ -70,6 +78,7 @@
 																					  ZFontAttributeName,
 																					  nil]];
 	[str addAttribute:ZFontAttributeName value:[[FontManager sharedManager] zFontWithName:@"Abberancy" pointSize:30] range:NSMakeRange(11, 10)];
+	[str addAttribute:ZClickableStyleAttributeName value:[Clickable clickableWithDelegate:self selector:@selector(yellowColorClicked:) withObject:nil] range:NSMakeRange(11, 10)];
 	[str addAttribute:ZForegroundColorAttributeName value:[UIColor yellowColor] range:NSMakeRange(11, 10)];
 	[str addAttribute:ZBackgroundColorAttributeName value:[UIColor blueColor] range:NSMakeRange(11, 10)];
 	[str addAttribute:ZUnderlineStyleAttributeName value:[NSNumber numberWithInt:ZUnderlineStyleSingle] range:NSMakeRange(47, 9)];
@@ -78,8 +87,16 @@
 	label4.textAlignment = UITextAlignmentLeft;
 	label4.backgroundColor = [UIColor lightGrayColor];
 	label4.numberOfLines = 0;
+
+	[label4 setGlow:YES];
+	[label4 setGlowColor:[UIColor purpleColor]];
+	
 	[self.view addSubview:label4];
 	[label4 release];
+}
+
+-(void)yellowColorClicked:(id)object {
+	NSLog(@"Clicked");
 }
 
 - (void)dealloc {
