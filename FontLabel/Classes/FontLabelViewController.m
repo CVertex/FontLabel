@@ -64,9 +64,11 @@
 	FontLabel *label3 = [[FontLabel alloc] initWithFrame:CGRectMake(10, CGRectGetMaxY(label2.frame) + 10, 300, 100)
 												  fontName:@"Schwarzwald Regular" pointSize:20.0f];
 	label3.textColor = [UIColor magentaColor];
-	label3.text = @"right justified.\nThis is line two. Long lines should wrap";
+	label3.text = @"right justified with shadow.\nThis is line two. Long lines should wrap";
 	label3.textAlignment = UITextAlignmentRight;
 	label3.backgroundColor = [UIColor blueColor];
+	label3.shadowColor = [UIColor blackColor];
+	label3.shadowOffset = CGSizeMake(-1, -1);
 	label3.numberOfLines = 0;
 	[self.view addSubview:label3];
 	[label3 release];

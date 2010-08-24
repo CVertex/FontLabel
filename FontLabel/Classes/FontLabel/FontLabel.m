@@ -158,11 +158,40 @@
 					break;
 			}
 			[self.text drawAtPoint:point forWidth:size.width withZFont:actualFont lineBreakMode:self.lineBreakMode hasGlow:self.glow withGlowColor:self.glowColor];
+			
+			if (self.shadowColor) {
+				CGPoint shadowPoint = CGPointMake(point.x + self.shadowOffset.width, point.y + self.shadowOffset.height);
+				
+				[[self shadowColor] setFill];
+				[self.text drawAtPoint:shadowPoint forWidth:size.width withZFont:actualFont lineBreakMode:self.lineBreakMode];
+			}
+			
 		} else {
 			CGSize size = [self.text sizeWithZFont:actualFont constrainedToSize:origSize lineBreakMode:self.lineBreakMode numberOfLines:self.numberOfLines];
 			CGPoint point = rect.origin;
 			point.y += roundf((rect.size.height - size.height) / 2.0f);
 			rect = (CGRect){point, CGSizeMake(rect.size.width, size.height)};
+			
+			//shadowOffset drawing code. I dont know how UILabel does it
+			//But I am just going to drawInRect twice with the shadowOffset drawn first
+			//Which will give the appearance of a shadow
+			if (self.shadowColor) {
+				CGRect shadowRect = CGRectMake(rect.origin.x + self.shadowOffset.width,
+											   rect.origin.y + self.shadowOffset.height,
+											   rect.size.width,
+											   rect.size.height);
+				[[self shadowColor] setFill];
+				[self.text drawInRect:shadowRect withZFont:actualFont lineBreakMode:self.lineBreakMode alignment:self.textAlignment numberOfLines:self.numberOfLines];
+			}
+			
+			// this method is documented as setting the text color for us, but that doesn't appear to be the case
+			if (self.highlighted) {
+				[(self.highlightedTextColor ?: [UIColor whiteColor]) setFill];
+			} else {
+				[(self.textColor ?: [UIColor blackColor]) setFill];
+			}
+			
+			
 			[self.text drawInRect:rect withZFont:actualFont lineBreakMode:self.lineBreakMode alignment:self.textAlignment numberOfLines:self.numberOfLines hasGlow:self.glow withGlowColor:self.glowColor];
 		}
 	} else {
